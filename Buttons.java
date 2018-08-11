@@ -19,6 +19,16 @@ public class Buttons extends JPanel{
 	
 
 	public Buttons() {
+		
+//		newButton.setActionCommand("new");
+//		namedButton.setActionCommand("named");
+//		descButton.setActionCommand("described");
+//		searchButton.setActionCommand("search");
+//		hideButton.setActionCommand("hide");
+//		removeButton.setActionCommand("remove");
+//		coordsButton.setActionCommand("coords");
+//		hideCategories.setActionCommand("hidecategories");
+		
 		placeType.add(namedButton);
 		placeType.add(descButton);
 		typeButton.add(namedButton);
@@ -31,6 +41,7 @@ public class Buttons extends JPanel{
 		add(hideButton);
 		add(removeButton);
 		add(coordsButton);
+	
 	
 	}
 	

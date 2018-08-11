@@ -8,6 +8,7 @@ import java.util.*;
 public class Window extends JFrame {
 
 	private Scanner scan;
+	private ArrayList tempList;
 	private JFrame frame;
 	private ImageWindow img;
 	private Menu menu;
@@ -28,6 +29,7 @@ public class Window extends JFrame {
 	private PositionCollection train = new PositionCollection();
 	private PositionCollection none = new PositionCollection();
 	private JScrollPane scrollPane;
+	private boolean newMode = false;
 
 	public Window() {
 		super("Kartsystem");
@@ -55,12 +57,12 @@ public class Window extends JFrame {
 
 		buttonListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (e.getSource() == buttons.getButton(0) && !(img == null)) {
-					img.removeMouseListener(markerListener);
+				if (e.getActionCommand().equals("New") && !(img == null)) {
+//					img.removeMouseListener(markerListener);
 					img.addMouseListener(mouseListener);
 					buttons.getButton(0).setEnabled(false);
 					img.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-				} else if (e.getSource() == buttons.getButton(1)) {
+				} else if (e.getActionCommand().equals("Search")) {
 					clearMarked();
 					String search = buttons.getText();
 					if (nC.checkName(search)) {
@@ -72,10 +74,11 @@ public class Window extends JFrame {
 						}
 					}
 					paint();
-				} else if (e.getSource() == buttons.getButton(2))
+				} else if (e.getActionCommand().equals("Hide"))
 					hideMarked();
-				else if (e.getSource() == buttons.getButton(3)) {
-					HashMap temp = marked.getHashMap();
+				else if (e.getActionCommand().equals("Remove")) {
+//					removePos("");
+					HashMap temp = marked.getHashMap();	
 					Iterator iterator = temp.entrySet().iterator();
 					while (iterator.hasNext()) {
 						Map.Entry current = (Map.Entry) iterator.next();
@@ -102,7 +105,7 @@ public class Window extends JFrame {
 					paint();
 					if (temp.size() > 0)
 						isChanged = true;
-				} else if (e.getSource() == buttons.getButton(4)) {
+				} else if (e.getActionCommand().equals("Coordinates")) {
 					CoordinatesForm form = new CoordinatesForm();
 					String[] options = { "OK", "Cancel" };
 					int answer = JOptionPane.showOptionDialog(form, form, "Coordinates search", 0,
@@ -117,15 +120,15 @@ public class Window extends JFrame {
 								plc.setBounds();
 							} else
 								JOptionPane.showMessageDialog(null,
-										"Det finns ingen plats på de angivna koordinaterna");
+										"Det finns ingen plats pï¿½ de angivna koordinaterna");
 						} catch (NumberFormatException er) {
-							JOptionPane.showMessageDialog(null, "Endast tillåtet med heltal");
+							JOptionPane.showMessageDialog(null, "Endast tillï¿½tet med heltal");
 						}
 					}
 					paint();
 				}
 
-				else if (e.getSource() == buttons.getButton(5)) {
+				else if (e.getActionCommand().equals("Hide categories")) {
 					String category = list.getSelected();
 					switch (category) {
 					case "Bus":
@@ -174,7 +177,7 @@ public class Window extends JFrame {
 				if (e.getSource() == menu.getArchiveOption(0)) {
 					if (isChanged) {
 						int confirmed = JOptionPane.showConfirmDialog(null,
-								"Det finns osparade ändringar, vill du gå vidare?", "Varning!",
+								"Det finns osparade ï¿½ndringar, vill du gï¿½ vidare?", "Varning!",
 								JOptionPane.YES_NO_OPTION);
 						if (confirmed == JOptionPane.YES_OPTION) {
 							FileChooser fc = new FileChooser();
@@ -190,6 +193,7 @@ public class Window extends JFrame {
 								underground.clear();
 								train.clear();
 								none.clear();
+//								removeAllPos();
 								isChanged = false;
 							}
 						}
@@ -212,7 +216,7 @@ public class Window extends JFrame {
 				} else if (e.getSource() == menu.getArchiveOption(1)) {
 					if (isChanged) {
 						int confirmed = JOptionPane.showConfirmDialog(null,
-								"Det finns osparade ändringar, vill du gå vidare?", "Varning!",
+								"Det finns osparade ï¿½ndringar, vill du gï¿½ vidare?", "Varning!",
 								JOptionPane.YES_NO_OPTION);
 						if (confirmed == JOptionPane.YES_OPTION) {
 							FileChooser fc = new FileChooser();
@@ -289,10 +293,10 @@ public class Window extends JFrame {
 									scan.close();
 									showAll(pC);
 									paint();
-									img.addMouseListener(markerListener);
+//									img.addMouseListener(markerListener);
 									isChanged = false;
 								} catch (FileNotFoundException er) {
-									JOptionPane.showMessageDialog(null, "Något gick fel");
+									JOptionPane.showMessageDialog(null, "Nï¿½got gick fel");
 								}
 							}
 						}
@@ -371,9 +375,9 @@ public class Window extends JFrame {
 								scan.close();
 								showAll(pC);
 								paint();
-								img.addMouseListener(markerListener);
+//								img.addMouseListener(markerListener);
 							} catch (FileNotFoundException er) {
-								JOptionPane.showMessageDialog(null, "Något gick fel");
+								JOptionPane.showMessageDialog(null, "Nï¿½got gick fel");
 							}
 						}
 					}
@@ -392,14 +396,14 @@ public class Window extends JFrame {
 							isChanged = false;
 							pw.close();
 						} catch (IOException er) {
-							JOptionPane.showMessageDialog(null, "Något gick fel");
+							JOptionPane.showMessageDialog(null, "Nï¿½got gick fel");
 						}
 					}
 
 				} else if (e.getSource() == menu.getArchiveOption(3)) {
 					if (isChanged) {
 						int confirmed = JOptionPane.showConfirmDialog(null,
-								"Det finns osparade ändringar, vill du avsluta?", "Varning!",
+								"Det finns osparade ï¿½ndringar, vill du avsluta?", "Varning!",
 								JOptionPane.YES_NO_OPTION);
 
 						if (confirmed == JOptionPane.YES_OPTION)
@@ -412,10 +416,10 @@ public class Window extends JFrame {
 		
 		class MarkerListener extends MouseAdapter {
 			public void mouseClicked(MouseEvent mev) {
-				int x = mev.getX();
-				int y = mev.getY();
-				Position p = new Position(x, y);
-				if (pC.checkPosition(p)) {
+//				int x = mev.getX();
+//				int y = mev.getY();
+				Position p = ((Place) mev.getComponent()).getPosition();
+				if (pC.checkPosition(p) && !newMode) {
 					Place plc = pC.getPlace(p);
 					if (SwingUtilities.isRightMouseButton(mev)) {
 						if (plc instanceof NamedPlace) {
@@ -449,11 +453,12 @@ public class Window extends JFrame {
 		class MouseListener extends MouseAdapter {
 			@Override
 			public void mouseClicked(MouseEvent mev) {
+				newMode = true;
 				int x = mev.getX();
 				int y = mev.getY();
 				Position p = new Position(x, y);
 				if (pC.checkPosition(p))
-					JOptionPane.showMessageDialog(null, "Det är endast tillåtet med en plats per position.");
+					JOptionPane.showMessageDialog(null, "Det ï¿½r endast tillï¿½tet med en plats per position.");
 				else if (!pC.checkPosition(p) && img.inMap(p)) {
 					Place plc;
 					String[] options = { "Ok" };
@@ -472,6 +477,7 @@ public class Window extends JFrame {
 					}
 					pC.addPlace(plc);
 					nC.addPlace(plc);
+					plc.addMouseListener(markerListener);
 					switch (plc.getCategory()) {
 					case "Bus":
 						bus.addPlace(plc);
@@ -494,9 +500,10 @@ public class Window extends JFrame {
 					isChanged = true;
 				}
 				img.removeMouseListener(this);
+				newMode = false;
 				buttons.getButton(0).setEnabled(true);
 				img.setCursor(Cursor.getDefaultCursor());
-				img.addMouseListener(markerListener);
+//				img.addMouseListener(markerListener);
 			}
 		}
 
@@ -504,7 +511,7 @@ public class Window extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				if (isChanged) {
 					int confirmed = JOptionPane.showConfirmDialog(null,
-							"Det finns osparade ändringar, vill du avsluta?", "Varning!", JOptionPane.YES_NO_OPTION);
+							"Det finns osparade ï¿½ndringar, vill du avsluta?", "Varning!", JOptionPane.YES_NO_OPTION);
 
 					if (confirmed == JOptionPane.YES_OPTION) {
 						setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -516,8 +523,8 @@ public class Window extends JFrame {
 		}
 		;
 
-		markerListener = new MarkerListener();
 		mouseListener = new MouseListener();
+		markerListener = new MarkerListener();
 		windowListener = new WindowListener();
 		frame.addWindowListener(windowListener);
 
@@ -545,6 +552,13 @@ public class Window extends JFrame {
 		setVisible(true);
 	}
 
+	public void removePos(String s) {
+		if (s == "all"){
+			
+		}
+		
+	}
+	
 	public void clearMarked() {
 		HashMap temp = marked.getHashMap();
 		Iterator iterator = temp.entrySet().iterator();
@@ -598,6 +612,39 @@ public class Window extends JFrame {
 		}
 	}
 	
+	public void removeAllPos () {
+		addAllToMarked(bus);
+		addAllToMarked(underground);
+		addAllToMarked(train);
+		addAllToMarked(none);
+//		tempList = new ArrayList<Place>();
+		HashMap temp = marked.getHashMap();	
+		Iterator iterator = temp.entrySet().iterator();
+		while (iterator.hasNext()) {
+			Map.Entry current = (Map.Entry) iterator.next();
+			Place plc = ((((Place) current.getValue())));
+			img.getBildContainer().remove(plc);
+			switch (plc.getCategory()) {
+			case "Bus":
+				bus.removePlace(plc.getPosition());
+				break;
+			case "Underground":
+				underground.removePlace(plc.getPosition());
+				break;
+			case "Train":
+				train.removePlace(plc.getPosition());
+				break;
+			case "None":
+				none.removePlace(plc.getPosition());
+				break;
+			}
+		}
+		nC.clear();
+		pC.clear();
+		marked.clear();
+		paint();
+	}
+	
 	public void addAllToMarked(PositionCollection posCol) {
 		HashMap temp = posCol.getHashMap();
 		Iterator iterator = temp.entrySet().iterator();
@@ -623,8 +670,8 @@ public class Window extends JFrame {
 	}
 
 	public void removeImage() {
-		frame.remove(img.getPanel());
-		frame.getContentPane().remove(img.getScroll());
+		frame.remove(img);
+//		frame.getContentPane().remove(img.getScroll());
 	}
 
 }
