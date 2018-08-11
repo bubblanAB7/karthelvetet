@@ -4,7 +4,7 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
-public class Place extends JComponent{
+public class Place extends JButton{
 
 	protected Position pos;
 	protected String category;
@@ -22,6 +22,8 @@ public class Place extends JComponent{
 		this.pos = p;
 		place = this;
 		this.name = n;
+		this.setContentAreaFilled(false);
+		this.setBorderPainted(false);
 		
 		this.category = s;
 		int[] xPointsPol = {0, 15, 30};
